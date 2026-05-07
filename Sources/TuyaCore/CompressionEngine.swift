@@ -77,7 +77,7 @@ public enum CompressionEngine {
         var notes: [String] = []
 
         if request.settings.saveMode == .overwriteOriginal && request.originalURL.pathExtension.lowercased() != codec.fileExtension {
-            notes.append("目标格式变化时，已安全输出为新文件")
+            notes.append(ZipicL10n.text("目标格式变化时，已安全输出为新文件", "Format changed, so the result was safely written to a new file"))
         }
 
         switch (metadata.sourceFormat, codec) {
@@ -122,7 +122,7 @@ private extension CompressionEngine {
         try write(outputData, to: destinationURL)
 
         var mergedNotes = notes
-        mergedNotes.append("SVG 已做文本精简")
+        mergedNotes.append(ZipicL10n.text("SVG 已做文本精简", "SVG markup was optimized"))
 
         let targetSize = resolvedSize(
             from: CGSize(width: metadata.pixelWidth, height: metadata.pixelHeight),
@@ -217,7 +217,7 @@ private extension CompressionEngine {
         try write(outputData, to: destinationURL)
 
         var mergedNotes = notes
-        mergedNotes.append("动画 GIF 通过逐帧缩放输出")
+        mergedNotes.append(ZipicL10n.text("动画 GIF 通过逐帧缩放输出", "Animated GIF exported by scaling frames individually"))
 
         return CompressionResult(
             sourceURL: request.originalURL,
@@ -276,7 +276,7 @@ private extension CompressionEngine {
             bestPixelSize = currentSize
 
             if codec == .jpeg && rendered.alphaInfo.containsAlpha {
-                mergedNotes.append("JPG 输出已自动铺白透明背景")
+                mergedNotes.append(ZipicL10n.text("JPG 输出已自动铺白透明背景", "Transparent areas were flattened onto white for JPG output"))
             }
 
             if let targetBytes, Int64(data.count) > targetBytes {
@@ -468,11 +468,11 @@ private extension CompressionEngine {
     ) throws -> Data {
         let output = NSMutableData()
         guard let destination = CGImageDestinationCreateWithData(output, uti, 1, nil) else {
-            throw CompressionError.commandFailed("无法创建导出目标")
+            throw CompressionError.commandFailed(ZipicL10n.text("无法创建导出目标", "Unable to create export destination"))
         }
         CGImageDestinationAddImage(destination, cgImage, properties as CFDictionary)
         guard CGImageDestinationFinalize(destination) else {
-            throw CompressionError.commandFailed("图片导出未完成")
+            throw CompressionError.commandFailed(ZipicL10n.text("图片导出未完成", "Image export did not finish"))
         }
         return output as Data
     }
@@ -795,7 +795,7 @@ private extension CompressionEngine {
         guard process.terminationStatus == 0 else {
             let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
             let stderr = String(data: errorData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-            throw CompressionError.commandFailed(stderr.isEmpty ? "\(executable.lastPathComponent) 执行失败" : stderr)
+            throw CompressionError.commandFailed(stderr.isEmpty ? ZipicL10n.text("\(executable.lastPathComponent) 执行失败", "\(executable.lastPathComponent) failed") : stderr)
         }
     }
 

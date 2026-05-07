@@ -16,13 +16,13 @@ final class CompressionItem: ObservableObject, Identifiable {
         var text: String {
             switch self {
             case .pending:
-                return "等待处理"
+                return AppStrings.pending
             case .processing:
-                return "正在压缩"
+                return AppStrings.processing
             case .completed:
-                return "已完成"
+                return AppStrings.completed
             case .failed:
-                return "处理失败"
+                return AppStrings.failed
             }
         }
 
@@ -49,7 +49,7 @@ final class CompressionItem: ObservableObject, Identifiable {
     @Published var originalSizeText = "--"
     @Published var outputSizeText = "--"
     @Published var savedText = "--"
-    @Published var destinationText = "尚未输出"
+    @Published var destinationText = AppStrings.outputPending
     @Published var noteText: String?
     @Published var state: State = .pending
     @Published var outputURL: URL?
@@ -97,12 +97,12 @@ final class AppState: ObservableObject {
 
     var summaryText: String {
         if jobs.isEmpty {
-            return "支持 JPG / PNG / GIF / SVG / WebP"
+            return ZipicL10n.dropFormats
         }
         if isCompressing {
-            return "正在逐张压缩并及时释放内存"
+            return ZipicL10n.memoryMessage
         }
-        return "共 \(jobs.count) 张图片"
+        return ZipicL10n.imageCount(jobs.count)
     }
 
     func importFiles(with urls: [URL]) {
@@ -138,7 +138,7 @@ final class AppState: ObservableObject {
 
     func openImporter() {
         let panel = NSOpenPanel()
-        panel.title = "添加图片"
+        panel.title = AppStrings.addImagesPanelTitle
         panel.allowedContentTypes = Self.supportedContentTypes
         panel.allowsMultipleSelection = true
         panel.canChooseDirectories = false
@@ -151,7 +151,7 @@ final class AppState: ObservableObject {
 
     func chooseCustomFolder() {
         let panel = NSOpenPanel()
-        panel.title = "选择输出文件夹"
+        panel.title = AppStrings.chooseOutputFolderTitle
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
         panel.canCreateDirectories = true
@@ -198,7 +198,7 @@ final class AppState: ObservableObject {
         for item in items {
             item.state = .pending
             item.outputURL = nil
-            item.destinationText = "尚未输出"
+            item.destinationText = AppStrings.outputPending
             item.outputSizeText = "--"
             item.savedText = "--"
             item.noteText = nil
@@ -231,7 +231,7 @@ final class AppState: ObservableObject {
                         item.outputURL = result.destinationURL
                         item.destinationText = result.destinationURL.path
                         item.outputSizeText = self.byteFormatter.string(fromByteCount: result.outputSize)
-                        item.savedText = String(format: "节省 %.0f%%", max(0, result.savedRatio * 100))
+                        item.savedText = ZipicL10n.savings(Int(max(0, result.savedRatio * 100).rounded()))
                         item.noteText = result.note
                         item.dimensionsText = "\(result.pixelWidth) × \(result.pixelHeight)"
                         item.state = .completed

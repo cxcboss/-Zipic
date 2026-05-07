@@ -9,7 +9,7 @@ public enum OutputFormat: String, Codable, CaseIterable, Sendable {
     public var displayName: String {
         switch self {
         case .original:
-            return "原格式"
+            return ZipicL10n.text("原格式", "Original")
         case .webP:
             return "WebP"
         case .png:
@@ -27,9 +27,9 @@ public enum CompressionMode: String, Codable, CaseIterable, Sendable {
     public var displayName: String {
         switch self {
         case .quality:
-            return "压缩强度"
+            return ZipicL10n.text("压缩强度", "Compression")
         case .targetSize:
-            return "文件大小"
+            return ZipicL10n.text("文件大小", "File Size")
         }
     }
 }
@@ -42,11 +42,11 @@ public enum SaveMode: String, Codable, CaseIterable, Sendable {
     public var displayName: String {
         switch self {
         case .originalFolder:
-            return "原文件夹"
+            return ZipicL10n.text("原文件夹", "Original Folder")
         case .overwriteOriginal:
-            return "覆盖原文件"
+            return ZipicL10n.text("覆盖原文件", "Overwrite Original")
         case .customFolder:
-            return "自定义文件夹"
+            return ZipicL10n.text("自定义文件夹", "Custom Folder")
         }
     }
 }
@@ -205,17 +205,17 @@ public enum CompressionError: LocalizedError, Sendable {
     public var errorDescription: String? {
         switch self {
         case .unsupportedInput(let url):
-            return "暂不支持处理 \(url.lastPathComponent)"
+            return ZipicL10n.text("暂不支持处理 \(url.lastPathComponent)", "This file type is not supported yet: \(url.lastPathComponent)")
         case .unreadableImage(let url):
-            return "无法读取 \(url.lastPathComponent)"
+            return ZipicL10n.text("无法读取 \(url.lastPathComponent)", "Unable to read \(url.lastPathComponent)")
         case .rasterizationFailed(let url):
-            return "无法将 \(url.lastPathComponent) 渲染为位图"
+            return ZipicL10n.text("无法将 \(url.lastPathComponent) 渲染为位图", "Unable to rasterize \(url.lastPathComponent)")
         case .encodingFailed(let codec):
-            return "导出 \(codec.fileExtension.uppercased()) 失败"
+            return ZipicL10n.text("导出 \(codec.fileExtension.uppercased()) 失败", "Failed to export \(codec.fileExtension.uppercased())")
         case .writeFailed(let url):
-            return "写入文件失败: \(url.path)"
+            return ZipicL10n.text("写入文件失败: \(url.path)", "Failed to write file: \(url.path)")
         case .customFolderMissing:
-            return "请选择自定义输出文件夹"
+            return ZipicL10n.text("请选择自定义输出文件夹", "Please choose a custom output folder")
         case .commandFailed(let message):
             return message
         }

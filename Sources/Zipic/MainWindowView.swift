@@ -21,11 +21,11 @@ struct MainWindowView: View {
         } isTargeted: { targeted in
             isDropTarget = targeted
         }
-        .alert("处理提醒", isPresented: Binding(
+        .alert(AppStrings.alertTitle, isPresented: Binding(
             get: { state.alertMessage != nil },
             set: { if !$0 { state.alertMessage = nil } }
         )) {
-            Button("知道了", role: .cancel) {
+            Button(AppStrings.ok, role: .cancel) {
                 state.alertMessage = nil
             }
         } message: {
@@ -66,7 +66,7 @@ struct MainWindowView: View {
             Button {
                 state.openImporter()
             } label: {
-                Label("添加图片", systemImage: "plus.square")
+                Label(AppStrings.addImages, systemImage: "plus.square")
                     .font(.system(size: 15, weight: .medium))
             }
             .buttonStyle(.link)
@@ -77,12 +77,12 @@ struct MainWindowView: View {
 
             Spacer()
 
-            Button("清空列表") {
+            Button(AppStrings.clearList) {
                 state.clearJobs()
             }
             .disabled(state.jobs.isEmpty || state.isCompressing)
 
-            Button(state.isCompressing ? "压缩中…" : "再次压缩") {
+            Button(state.isCompressing ? AppStrings.compressing : AppStrings.recompress) {
                 state.recompressAll()
             }
             .disabled(state.jobs.isEmpty || state.isCompressing)
@@ -97,22 +97,22 @@ struct MainWindowView: View {
                 GroupBox {
                     VStack(alignment: .leading, spacing: 14) {
                         HStack(spacing: 14) {
-                            LabeledInput(title: "宽度", text: state.optionalIntBinding(\.maxWidth), placeholder: "自动")
-                            LabeledInput(title: "高度", text: state.optionalIntBinding(\.maxHeight), placeholder: "自动")
+                            LabeledInput(title: AppStrings.width, text: state.optionalIntBinding(\.maxWidth), placeholder: AppStrings.automatic)
+                            LabeledInput(title: AppStrings.height, text: state.optionalIntBinding(\.maxHeight), placeholder: AppStrings.automatic)
                         }
 
-                        Toggle("保持原始宽高比", isOn: $state.settings.keepAspectRatio)
+                        Toggle(AppStrings.keepAspectRatio, isOn: $state.settings.keepAspectRatio)
                             .toggleStyle(.checkbox)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 } label: {
-                    Label("尺寸调整", systemImage: "aspectratio")
+                    Label(AppStrings.resizeSection, systemImage: "aspectratio")
                 }
 
                 GroupBox {
                     VStack(alignment: .leading, spacing: 14) {
                         RadioRow(
-                            title: "压缩方式",
+                            title: AppStrings.compressionMethod,
                             options: CompressionMode.allCases,
                             selection: $state.settings.compressionMode
                         ) { mode in
@@ -134,12 +134,12 @@ struct MainWindowView: View {
                                 .foregroundStyle(.secondary)
                             }
                         } else {
-                            LabeledInput(title: "目标大小", text: state.intBinding(\.targetSizeKB), placeholder: "KB", suffix: "KB")
+                            LabeledInput(title: AppStrings.targetSize, text: state.intBinding(\.targetSizeKB), placeholder: "KB", suffix: "KB")
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 } label: {
-                    Label("压缩控制", systemImage: "dial.medium")
+                    Label(AppStrings.compressionSection, systemImage: "dial.medium")
                 }
             }
             .padding(.horizontal, 20)
@@ -149,7 +149,7 @@ struct MainWindowView: View {
                     state.showExtendedSettings.toggle()
                 }
             } label: {
-                Label(state.showExtendedSettings ? "收起更多设置" : "展开更多设置", systemImage: state.showExtendedSettings ? "chevron.up" : "chevron.down")
+                Label(state.showExtendedSettings ? AppStrings.collapseMore : AppStrings.expandMore, systemImage: state.showExtendedSettings ? "chevron.up" : "chevron.down")
                     .font(.system(size: 13))
             }
             .buttonStyle(.plain)
@@ -159,20 +159,20 @@ struct MainWindowView: View {
                 VStack(spacing: 16) {
                     GroupBox {
                         RadioRow(
-                            title: "目标格式",
+                            title: AppStrings.outputFormat,
                             options: OutputFormat.allCases,
                             selection: $state.settings.outputFormat
                         ) { format in
                             format.displayName
                         }
                     } label: {
-                        Label("输出格式", systemImage: "photo")
+                        Label(AppStrings.outputSection, systemImage: "photo")
                     }
 
                     GroupBox {
                         VStack(alignment: .leading, spacing: 12) {
                             RadioRow(
-                                title: "保存路径",
+                                title: AppStrings.savePath,
                                 options: SaveMode.allCases,
                                 selection: $state.settings.saveMode
                             ) { mode in
@@ -181,20 +181,20 @@ struct MainWindowView: View {
 
                             if state.settings.saveMode == .customFolder {
                                 HStack(spacing: 12) {
-                                    Text(state.settings.customDirectory?.path ?? "尚未选择输出文件夹")
+                                    Text(state.settings.customDirectory?.path ?? AppStrings.outputFolderMissing)
                                         .font(.system(size: 12))
                                         .foregroundStyle(.secondary)
                                         .lineLimit(1)
                                         .truncationMode(.middle)
                                     Spacer(minLength: 0)
-                                    Button("选择文件夹") {
+                                    Button(AppStrings.chooseFolder) {
                                         state.chooseCustomFolder()
                                     }
                                 }
                             }
                         }
                     } label: {
-                        Label("保存策略", systemImage: "folder")
+                        Label(AppStrings.saveSection, systemImage: "folder")
                     }
                 }
                 .padding(.horizontal, 20)
@@ -223,10 +223,10 @@ private struct EmptyDropZone: View {
                     .font(.system(size: 60, weight: .light))
                     .foregroundStyle(isTargeted ? Color.accentColor : Color.secondary)
             }
-            Text("拖入图片开始压缩")
-                .font(.system(size: 28, weight: .medium))
+            Text(AppStrings.dropToCompress)
+                .font(.system(size: 24, weight: .medium))
             Text(subtitle)
-                .font(.system(size: 18))
+                .font(.system(size: 16))
                 .foregroundStyle(.secondary)
         }
     }
@@ -251,10 +251,10 @@ private struct JobRowView: View {
                 }
 
                 HStack(spacing: 18) {
-                    MetricLabel(title: "尺寸", value: item.dimensionsText)
-                    MetricLabel(title: "原始", value: item.originalSizeText)
-                    MetricLabel(title: "输出", value: item.outputSizeText)
-                    MetricLabel(title: "结果", value: item.savedText)
+                    MetricLabel(title: AppStrings.metricDimensions, value: item.dimensionsText)
+                    MetricLabel(title: AppStrings.metricOriginal, value: item.originalSizeText)
+                    MetricLabel(title: AppStrings.metricOutput, value: item.outputSizeText)
+                    MetricLabel(title: AppStrings.metricResult, value: item.savedText)
                 }
 
                 Text(item.destinationText)
@@ -270,7 +270,7 @@ private struct JobRowView: View {
                 }
 
                 if item.outputURL != nil {
-                    Button("在访达中显示", action: onReveal)
+                    Button(AppStrings.revealInFinder, action: onReveal)
                         .font(.system(size: 12))
                         .buttonStyle(.link)
                 }

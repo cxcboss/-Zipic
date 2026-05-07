@@ -14,6 +14,7 @@ RESOURCES_DIR="$APP_DIR/Contents/Resources"
 INFO_PLIST="$APP_DIR/Contents/Info.plist"
 ZIP_PATH="$DIST_DIR/$APP_NAME-arm64.zip"
 SOURCE_ICON_PATH="$ROOT_DIR/Resources/$ICON_NAME.icns"
+LOCALIZATION_SOURCE_DIR="$ROOT_DIR/Resources/Localizations"
 
 cd "$ROOT_DIR"
 
@@ -26,6 +27,9 @@ swift build -c release --arch arm64
 
 cp "$BUILD_DIR/$PRODUCT_NAME" "$EXECUTABLE_PATH"
 cp "$SOURCE_ICON_PATH" "$RESOURCES_DIR/$ICON_NAME.icns"
+if [[ -d "$LOCALIZATION_SOURCE_DIR" ]]; then
+  cp -R "$LOCALIZATION_SOURCE_DIR"/. "$RESOURCES_DIR/"
+fi
 chmod +x "$EXECUTABLE_PATH"
 
 cat > "$INFO_PLIST" <<EOF
